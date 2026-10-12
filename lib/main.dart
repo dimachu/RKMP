@@ -22,32 +22,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// Главный экран: StatefulWidget.
-class HotelsInfoPage extends StatefulWidget {
+/// Главный экран.
+class HotelsInfoPage extends StatelessWidget {
   const HotelsInfoPage({super.key});
-
-  @override
-  State<HotelsInfoPage> createState() => _HotelsInfoPageState();
-}
-
-class _HotelsInfoPageState extends State<HotelsInfoPage> {
-  static const List<String> _images = [
-    'assets/images/hotel1.png',
-    'assets/images/hotel2.png',
-    'assets/images/hotel3.png',
-    'assets/images/hotel4.png',
-    'assets/images/hotel.png',
-  ];
-
-  // Индекс текущей картинки — состояние виджета.
-  int _currentIndex = 0;
-
-  // Циклическая смена изображений.
-  void _nextImage() {
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % _images.length;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +42,7 @@ class _HotelsInfoPageState extends State<HotelsInfoPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Заголовок
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -78,6 +56,7 @@ class _HotelsInfoPageState extends State<HotelsInfoPage> {
               ),
             ),
             const SizedBox(height: 16),
+            // Описание ПО
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -94,69 +73,12 @@ class _HotelsInfoPageState extends State<HotelsInfoPage> {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  // Смена картинки по нажатию на неё.
-                  child: GestureDetector(
-                    onTap: _nextImage,
-                    child: Container(
-                      height: 200,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          _images[_currentIndex],
-                          width: 300,
-                          height: 200,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    height: 200,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('1. Поиск отеля по городу и датам'),
-                        SizedBox(height: 8),
-                        Text('2. Бронирование номера'),
-                        SizedBox(height: 8),
-                        Text('3. Отзывы и рейтинг отеля'),
-                        SizedBox(height: 8),
-                        Text('4. Онлайн-оплата брони'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Смена картинки по нажатию на кнопку.
-            Center(
-              child: ElevatedButton(
-                onPressed: _nextImage,
-                child: Text(
-                  'Следующее фото (${_currentIndex + 1} из ${_images.length})',
-                ),
-              ),
-            ),
+            // Горизонтальный ListView со скруглёнными изображениями
+            const ImageRow(),
             const SizedBox(height: 16),
+            // Вертикальный ListView из карточек
+            const FeatureList(),
+            const SizedBox(height: 8),
             const Divider(),
             const SizedBox(height: 8),
             const Row(
@@ -167,15 +89,109 @@ class _HotelsInfoPageState extends State<HotelsInfoPage> {
                   child: Icon(Icons.person, color: Colors.white),
                 ),
                 SizedBox(width: 12),
-                Text(
-                  'Чумак Д.Е., группа ИКБО-66-23',
-                  style: TextStyle(fontSize: 16),
+                Flexible(
+                  child: Text(
+                    'Чумак Д.Е., группа ИКБО-66-23',
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Горизонтальный список изображений со скруглёнными углами.
+class ImageRow extends StatelessWidget {
+  const ImageRow({super.key});
+
+  static const List<String> images = [
+    'assets/images/hotel1.png',
+    'assets/images/hotel2.png',
+    'assets/images/hotel3.png',
+    'assets/images/hotel4.png',
+    'assets/images/hotel.png',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200, // у горизонтального ListView высота должна быть задана
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                images[index],
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Вертикальный список функций приложения в виде карточек.
+class FeatureList extends StatelessWidget {
+  const FeatureList({super.key});
+
+  static const List<String> titles = [
+    'Поиск отеля по городу и датам',
+    'Бронирование номера',
+    'Отзывы и рейтинг отеля',
+    'Онлайн-оплата брони',
+  ];
+
+  static const List<String> subtitles = [
+    'Подбор вариантов под ваш запрос',
+    'Выбор номера и оформление заявки',
+    'Мнения гостей и оценки отелей',
+    'Безопасная оплата со смартфона',
+  ];
+
+  static const List<IconData> icons = [
+    Icons.search,
+    Icons.bed,
+    Icons.star,
+    Icons.payment,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      // вложенный список внутри прокручиваемого экрана
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: titles.length,
+      itemBuilder: (context, index) {
+        return Card(
+          child: ListTile(
+            leading: Icon(icons[index], color: Colors.green),
+            title: Text(titles[index]),
+            subtitle: Text(subtitles[index]),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(titles[index]),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
