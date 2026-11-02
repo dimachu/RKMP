@@ -6,10 +6,14 @@ class ProfilePage extends StatefulWidget {
   final String fullName;
   final String email;
 
+  /// Действие кнопки «назад» (на основном экране — переключение на главную вкладку)
+  final VoidCallback? onBack;
+
   const ProfilePage({
     super.key,
     this.fullName = 'Чумак Д.Е.',
     this.email = 'test123@mail.ru',
+    this.onBack,
   });
 
   @override
@@ -59,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             foregroundColor: Colors.white,
             shape: const CircleBorder(),
           ),
-          onPressed: () => Navigator.of(context).maybePop(),
+          onPressed: widget.onBack ?? () => Navigator.of(context).maybePop(),
         ),
         title: const Text('Профиль',
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
@@ -142,9 +146,3 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: const ProfilePage(),
-  ));
-}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/text_field.dart';
-import 'profile_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -30,16 +29,10 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState?.validate() ?? false) {
       FocusScope.of(context).unfocus();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Регистрация прошла успешно')),
+        const SnackBar(content: Text('Регистрация прошла успешно. Войдите')),
       );
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => ProfilePage(
-            fullName: _nameController.text.trim(),
-            email: _emailController.text.trim(),
-          ),
-        ),
-      );
+      // Возврат на экран авторизации, передаём email обратно
+      Navigator.pop(context, _emailController.text.trim());
     }
   }
 
@@ -142,9 +135,3 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: const RegisterPage(),
-  ));
-}

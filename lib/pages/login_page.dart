@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../routes.dart';
 import '../widgets/text_field.dart';
-import 'hotels_page.dart';
-import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,9 +28,19 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Вход выполнен')),
       );
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HotelsInfoPage()),
-      );
+      // Успешная авторизация -> основной экран (экран входа убираем из стека)
+      Navigator.pushReplacementNamed(context, Routes.home);
+    }
+  }
+
+  /// Переход на регистрацию. После успешной регистрации экран
+  /// возвращает email — подставляем его в поле.
+  Future<void> _openRegister() async {
+    final email = await Navigator.pushNamed(context, Routes.register);
+    if (!mounted) return;
+    if (email is String) {
+      _emailController.text = email;
+      _passwordController.clear();
     }
   }
 
@@ -115,12 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     const Text('Нет аккаунта? '),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (_) => const RegisterPage()),
-                        );
-                      },
+                      onTap: _openRegister,
                       child: const Text(
                         'Зарегистрируйтесь',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -137,9 +141,3 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: const LoginPage(),
-  ));
-}
